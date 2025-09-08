@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin to Taka Converter</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #1d3b45, #2c5364);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(to right, #4776E6, #8E54E9);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-weight: 600;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 18px;
+        }
+
+        .converter {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: white;
+            font-size: 18px;
+        }
+
+        .amount-input {
+            width: 100%;
+            padding: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 20px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .amount-input:focus {
+            border-color: rgba(255, 255, 255, 0.5);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        .amount-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .convert-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(to right, #4776E6, #8E54E9);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 25px;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .convert-btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            text-align: center;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .result h3 {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+            font-weight: 500;
+            font-size: 20px;
+        }
+
+        .result-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: white;
+            word-break: break-all;
+        }
+
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .coin, .taka {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            position: absolute;
+            backface-visibility: hidden;
+            transition: transform 0.8s;
+        }
+
+        .coin {
+            background: linear-gradient(145deg, #ffd700, #daa520);
+            color: #b8860b;
+            z-index: 1;
+        }
+
+        .taka {
+            background: linear-gradient(145deg, #28a745, #20c997);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .flip .coin {
+            transform: rotateY(180deg);
+        }
+
+        .flip .taka {
+            transform: rotateY(0deg);
+        }
+
+        .info-text {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        /* Hidden Admin Panel (Firefox only) */
+        .admin-panel {
+            display: none;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-panel h3 {
+            color: white;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .admin-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .admin-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, #FF416C, #FF4B2B);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Firefox detection for admin panel */
+        @-moz-document url-prefix() {
+            .admin-panel {
+                display: block;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .result-value {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-coins"></i> আপনার কঠোর পরিশ্রম, এখন টাকায়</h1>
+            <p>প্রতিটি কয়েনকে টাকায় রূপান্তর করুন, <br>সাফল্যের চাবিকাঠি হলো ধারাবাহিকতা</p>
+        </div>
+        
+        <div class="converter">
+            <div class="input-group">
+                <label for="coinAmount"><i class="fas fa-coins"></i> কয়েন লিখুন</label>
+                <input type="number" id="coinAmount" class="amount-input" placeholder="Enter coin amount" value="100">
+            </div>
+            
+            <button id="convert-btn" class="convert-btn">টাকায় রূপান্তর করুন</button>
+            
+            <div class="result">
+                <h3>আপনার সঞ্চিত অর্থ</h3>
+                <div id="result-value" class="result-value">0.00 Taka</div>
+            </div>
+            
+            <div class="animation-container" id="animation-container">
+                <div class="coin">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="taka">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+            </div>
+            
+            <div class="info-text">
+                <p>Powerd By Daily Earning</p>
+                <p>Earning power is the real wealth</p>
+            </div>
+        </div>
+
+        <!-- Admin Panel (only visible in Firefox) -->
+        <div class="admin-panel">
+            <h3><i class="fas fa-lock"></i> Admin Panel</h3>
+            <input type="number" id="adminRate" class="admin-input" placeholder="Enter conversion rate (coins per Taka)">
+            <button id="admin-btn" class="admin-btn">Set Conversion Rate</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const coinAmount = document.getElementById('coinAmount');
+        const convertBtn = document.getElementById('convert-btn');
+        const resultValue = document.getElementById('result-value');
+        const animationContainer = document.getElementById('animation-container');
+        const adminRateInput = document.getElementById('adminRate');
+        const adminBtn = document.getElementById('admin-btn');
+
+        // Conversion rate (default: 10,000 coins = 1 Taka)
+        let conversionRate = 10000;
+
+        // Check if a rate is stored in localStorage
+        if (localStorage.getItem('conversionRate')) {
+            conversionRate = parseInt(localStorage.getItem('conversionRate'));
+        }
+
+        // Set the admin input value to current rate
+        adminRateInput.value = conversionRate;
+
+        // Convert coins function
+        function convertCoins() {
+            const coins = parseFloat(coinAmount.value);
+            if (isNaN(coins) || coins < 0) {
+                resultValue.textContent = 'Invalid amount';
+                return;
+            }
+            
+            const taka = coins / conversionRate;
+            resultValue.textContent = taka.toFixed(2) + ' Taka';
+        }
+
+        // Animate conversion
+        function animateConversion() {
+            animationContainer.classList.remove('flip');
+            // Trigger reflow
+            void animationContainer.offsetWidth;
+            animationContainer.classList.add('flip');
+            
+            // Reset animation after 2 seconds
+            setTimeout(() => {
+                animationContainer.classList.remove('flip');
+            }, 2000);
+        }
+
+        // Update conversion rate from admin panel
+        function updateConversionRate() {
+            const newRate = parseInt(adminRateInput.value);
+            if (isNaN(newRate) || newRate <= 0) {
+                alert('Please enter a valid conversion rate');
+                return;
+            }
+            
+            conversionRate = newRate;
+            localStorage.setItem('conversionRate', conversionRate);
+            convertCoins();
+            alert('Conversion rate updated to: ' + conversionRate + ' coins per Taka');
+        }
+
+        // Event listeners
+        convertBtn.addEventListener('click', function() {
+            convertCoins();
+            animateConversion();
+        });
+
+        coinAmount.addEventListener('input', convertCoins);
+        adminBtn.addEventListener('click', updateConversionRate);
+
+        // Initial conversion
+        convertCoins();
+    </script>
+</body>
+</html>
