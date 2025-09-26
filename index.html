@@ -3,360 +3,785 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coin to Taka Converter</title>
-    
+    <title>Finova Cash App - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #28a745;
+            --background-color: #f0f2f5;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --light-text-color: #888888;
+            --border-color: #e0e0e0;
+            --dark-background-color: #121212;
+            --dark-card-background: #1e1e1e;
+            --dark-text-color: #ffffff;
+            --dark-light-text-color: #bbbbbb;
+            --dark-border-color: #333333;
         }
 
         body {
-            background: linear-gradient(135deg, #0f2027, #1d3b45, #2c5364);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding-bottom: 60px;
+            color: var(--text-color);
+        }
+
+        body.dark-mode {
+            --background-color: var(--dark-background-color);
+            --card-background: var(--dark-card-background);
+            --text-color: var(--dark-text-color);
+            --light-text-color: var(--dark-light-text-color);
+            --border-color: var(--dark-border-color);
         }
 
         .container {
-            width: 100%;
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
+            max-width: 800px; /* Wider for admin panel */
+            margin: 0 auto;
+            background-color: var(--card-background);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .header {
-            background: linear-gradient(to right, #4776E6, #8E54E9);
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .header h1 {
+        .header-profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 2px solid var(--primary-color);
+            background-color: #eee;
+            object-fit: cover;
+        }
+
+        .header-user-info h3 {
+            margin: 0;
+            font-size: 16px;
             font-weight: 600;
-            font-size: 32px;
-            margin-bottom: 10px;
         }
 
-        .header p {
-            opacity: 0.9;
-            font-size: 18px;
+        .header-user-info p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--light-text-color);
         }
 
-        .converter {
-            padding: 30px;
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
         }
 
-        .input-group {
-            margin-bottom: 25px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: white;
-            font-size: 18px;
-        }
-
-        .amount-input {
-            width: 100%;
-            padding: 18px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+        .card {
+            background-color: var(--background-color);
             border-radius: 12px;
-            font-size: 20px;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border: 1px solid var(--border-color);
         }
 
-        .amount-input:focus {
-            border-color: rgba(255, 255, 255, 0.5);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        .card-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .amount-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+        .card-header .material-icons, .card-header .fa-solid {
+            margin-right: 8px;
+            color: var(--primary-color);
         }
 
-        .convert-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(to right, #4776E6, #8E54E9);
-            color: white;
+        .primary-btn, .secondary-btn, .danger-btn {
             border: none;
-            border-radius: 12px;
-            font-size: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-bottom: 25px;
+            width: 100%;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .convert-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
+        .primary-btn {
+            background-color: var(--primary-color);
+            color: #fff;
         }
 
-        .convert-btn:active {
-            transform: translateY(0);
+        .primary-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
         }
 
-        .result {
-            text-align: center;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.1);
+        .danger-btn {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .danger-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .secondary-btn {
+            background-color: #f0f0f0;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .secondary-btn:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .dashboard-item {
+            background-color: var(--card-background);
             border-radius: 12px;
-            border: 2px dashed rgba(255, 255, 255, 0.2);
-            margin-bottom: 20px;
-            min-height: 120px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .dashboard-item .material-icons {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .dashboard-item-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .dashboard-item-label {
+            font-size: 12px;
+            color: var(--light-text-color);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .table th {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--card-background);
+            border-top: 1px solid var(--border-color);
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            padding: 10px;
+            cursor: pointer;
+            color: var(--light-text-color);
+            transition: color 0.3s;
+            flex: 1;
         }
 
-        .result h3 {
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 15px;
+        .nav-item .material-icons, .nav-item .fa-solid {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .nav-item-label {
+            font-size: 12px;
             font-weight: 500;
-            font-size: 20px;
         }
 
-        .result-value {
-            font-size: 36px;
-            font-weight: 700;
-            color: white;
-            word-break: break-all;
+        .nav-item.active {
+            color: var(--primary-color);
         }
 
-        .animation-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100px;
-            margin-top: 20px;
-            position: relative;
+        /* Additional Styles for Admin Features */
+        .search-bar {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 16px;
         }
 
-        .coin, .taka {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 40px;
-            position: absolute;
-            backface-visibility: hidden;
-            transition: transform 0.8s;
-        }
-
-        .coin {
-            background: linear-gradient(145deg, #ffd700, #daa520);
-            color: #b8860b;
-            z-index: 1;
-        }
-
-        .taka {
-            background: linear-gradient(145deg, #28a745, #20c997);
-            color: white;
-            transform: rotateY(180deg);
-        }
-
-        .flip .coin {
-            transform: rotateY(180deg);
-        }
-
-        .flip .taka {
-            transform: rotateY(0deg);
-        }
-
-        .info-text {
-            text-align: center;
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.7);
+        .log-entry {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
             font-size: 14px;
         }
 
-        /* Hidden Admin Panel (Firefox only) */
-        .admin-panel {
-            display: none;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        #login-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--background-color);
         }
 
-        .admin-panel h3 {
-            color: white;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .admin-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            margin-bottom: 15px;
-        }
-
-        .admin-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(to right, #FF416C, #FF4B2B);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* Firefox detection for admin panel */
-        @-moz-document url-prefix() {
-            .admin-panel {
-                display: block;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .header h1 {
-                font-size: 28px;
-            }
-            
-            .result-value {
-                font-size: 28px;
-            }
+        #login-form {
+            background-color: var(--card-background);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 300px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-coins"></i> আপনার কঠোর পরিশ্রম, এখন টাকায়</h1>
-            <p>প্রতিটি কয়েনকে টাকায় রূপান্তর করুন, <br>সাফল্যের চাবিকাঠি হলো ধারাবাহিকতা</p>
-        </div>
-        
-        <div class="converter">
-            <div class="input-group">
-                <label for="coinAmount"><i class="fas fa-coins"></i> কয়েন লিখুন</label>
-                <input type="number" id="coinAmount" class="amount-input" placeholder="Enter coin amount" value="100">
+    <section id="login-page" class="page active">
+        <form id="login-form">
+            <h2 class="card-header" style="text-align: center;">Admin Login</h2>
+            <div class="form-group">
+                <label for="admin-username">Username</label>
+                <input type="email" id="admin-username" placeholder="Enter username" required>
             </div>
-            
-            <button id="convert-btn" class="convert-btn">টাকায় রূপান্তর করুন</button>
-            
-            <div class="result">
-                <h3>আপনার সঞ্চিত অর্থ</h3>
-                <div id="result-value" class="result-value">0.00 Taka</div>
+            <div class="form-group">
+                <label for="admin-password">Password</label>
+                <input type="password" id="admin-password" placeholder="Enter password" required>
             </div>
-            
-            <div class="animation-container" id="animation-container">
-                <div class="coin">
-                    <i class="fas fa-coins"></i>
-                </div>
-                <div class="taka">
-                    <i class="fas fa-money-bill-wave"></i>
-                </div>
-            </div>
-            
-            <div class="info-text">
-                <p>Powerd By Daily Earning</p>
-                <p>Earning power is the real wealth</p>
-            </div>
-        </div>
+            <button type="submit" class="primary-btn">Login</button>
+        </form>
+    </section>
 
-        <!-- Admin Panel (only visible in Firefox) -->
-        <div class="admin-panel">
-            <h3><i class="fas fa-lock"></i> Admin Panel</h3>
-            <input type="number" id="adminRate" class="admin-input" placeholder="Enter conversion rate (coins per Taka)">
-            <button id="admin-btn" class="admin-btn">Set Conversion Rate</button>
-        </div>
+    <div class="container" id="admin-container" style="display: none;">
+        <header class="header">
+            <img id="admin-profile-pic" src="https://via.placeholder.com/40" alt="Admin Profile" class="header-profile-pic">
+            <div class="header-user-info">
+                <h3 id="admin-name">Site Admin</h3>
+                <p>Admin Panel</p>
+            </div>
+            <button id="dark-mode-toggle" class="material-icons" style="margin-left: auto; cursor: pointer;">brightness_6</button>
+            <button id="logout-btn" class="material-icons" style="cursor: pointer; margin-left: 10px;">logout</button>
+        </header>
+
+        <main class="content">
+            <section id="dashboard-page" class="page active">
+                <div class="card">
+                    <h2 class="card-header">
+                        <span class="material-icons">dashboard</span>
+                        Admin Dashboard
+                    </h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-item">
+                            <span class="material-icons" style="color: var(--primary-color);">people</span>
+                            <div class="dashboard-item-value" id="total-users">0</div>
+                            <div class="dashboard-item-label">Total Users</div>
+                        </div>
+                        <div class="dashboard-item">
+                            <span class="material-icons" style="color: #ffc107;">attach_money</span>
+                            <div class="dashboard-item-value" id="total-earnings-app">BDT 0.00</div>
+                            <div class="dashboard-item-label">Total App Earnings</div>
+                        </div>
+                        <div class="dashboard-item">
+                            <span class="material-icons" style="color: #dc3545;">currency_exchange</span>
+                            <div class="dashboard-item-value" id="pending-withdraws">0</div>
+                            <div class="dashboard-item-label">Pending Withdraws</div>
+                        </div>
+                        <div class="dashboard-item">
+                            <span class="material-icons" style="color: var(--secondary-color);">visibility</span>
+                            <div class="dashboard-item-value" id="total-ads-app">0</div>
+                            <div class="dashboard-item-label">Total Ads Watched</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="users-page" class="page">
+                <div class="card">
+                    <h2 class="card-header">
+                        <span class="material-icons">people</span>
+                        User Management
+                    </h2>
+                    <input type="text" class="search-bar" id="user-search" placeholder="Search users by name or ID">
+                    <table class="table" id="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Balance</th>
+                                <th>Ads Watched</th>
+                                <th>Referrals</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <button class="primary-btn" id="add-user-btn">Add New User</button>
+                </div>
+            </section>
+
+            <section id="withdraw-requests-page" class="page">
+                <div class="card">
+                    <h2 class="card-header">
+                        <span class="material-icons">currency_exchange</span>
+                        Withdraw Requests
+                    </h2>
+                    <table class="table" id="withdraw-requests-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="audit-log-page" class="page">
+                <div class="card">
+                    <h2 class="card-header">
+                        <span class="material-icons">history</span>
+                        Audit Log
+                    </h2>
+                    <div id="audit-log-container"></div>
+                </div>
+            </section>
+
+            <section id="settings-page" class="page">
+                <div class="card">
+                    <h2 class="card-header">
+                        <span class="material-icons">settings</span>
+                        App Settings
+                    </h2>
+                    <form id="settings-form">
+                        <div class="form-group">
+                            <label for="ad-reward">Ad Reward (BDT)</label>
+                            <input type="number" id="ad-reward" value="0.02">
+                        </div>
+                        <div class="form-group">
+                            <label for="daily-ads-limit">Daily Ads Limit</label>
+                            <input type="number" id="daily-ads-limit" value="500">
+                        </div>
+                        <div class="form-group">
+                            <label for="min-withdraw">Min Withdraw (BDT)</label>
+                            <input type="number" id="min-withdraw" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-integration">Payment Gateway API Key</label>
+                            <input type="text" id="payment-integration" placeholder="Enter API Key for bKash/Nagad etc.">
+                        </div>
+                        <button type="submit" class="primary-btn">Save Settings</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="analytics-page" class="page">
+                <div class="card">
+                    <h2 class="card-header">
+                        <span class="material-icons">analytics</span>
+                        Analytics & Reports
+                    </h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-item">
+                            <span class="material-icons">trending_up</span>
+                            <div class="dashboard-item-value" id="daily-active-users">0</div>
+                            <div class="dashboard-item-label">Daily Active Users</div>
+                        </div>
+                        <div class="dashboard-item">
+                            <span class="material-icons">bar_chart</span>
+                            <div class="dashboard-item-value" id="total-revenue">BDT 0.00</div>
+                            <div class="dashboard-item-label">Total Revenue</div>
+                        </div>
+                    </div>
+                    <button class="secondary-btn" id="generate-report-btn">Generate Report</button>
+                </div>
+            </section>
+
+            <section id="rate-limiting-page" class="page">
+                <div class="card">
+                    <h2 class="card-header">
+                        <span class="material-icons">timer</span>
+                        Rate Limiting & Security
+                    </h2>
+                    <form id="rate-limit-form">
+                        <div class="form-group">
+                            <label for="ad-cooldown">Ad Cooldown (seconds)</label>
+                            <input type="number" id="ad-cooldown" value="30">
+                        </div>
+                        <div class="form-group">
+                            <label for="max-login-attempts">Max Login Attempts</label>
+                            <input type="number" id="max-login-attempts" value="5">
+                        </div>
+                        <button type="submit" class="primary-btn">Apply Security Settings</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <nav class="footer-nav">
+            <div class="nav-item active" data-page="dashboard-page">
+                <span class="material-icons">dashboard</span>
+                <span class="nav-item-label">Dashboard</span>
+            </div>
+            <div class="nav-item" data-page="users-page">
+                <span class="material-icons">people</span>
+                <span class="nav-item-label">Users</span>
+            </div>
+            <div class="nav-item" data-page="withdraw-requests-page">
+                <span class="material-icons">currency_exchange</span>
+                <span class="nav-item-label">Withdraws</span>
+            </div>
+            <div class="nav-item" data-page="audit-log-page">
+                <span class="material-icons">history</span>
+                <span class="nav-item-label">Audit Log</span>
+            </div>
+            <div class="nav-item" data-page="settings-page">
+                <span class="material-icons">settings</span>
+                <span class="nav-item-label">Settings</span>
+            </div>
+            <div class="nav-item" data-page="analytics-page">
+                <span class="material-icons">analytics</span>
+                <span class="nav-item-label">Analytics</span>
+            </div>
+            <div class="nav-item" data-page="rate-limiting-page">
+                <span class="material-icons">security</span>
+                <span class="nav-item-label">Security</span>
+            </div>
+        </nav>
     </div>
 
     <script>
-        // DOM elements
-        const coinAmount = document.getElementById('coinAmount');
-        const convertBtn = document.getElementById('convert-btn');
-        const resultValue = document.getElementById('result-value');
-        const animationContainer = document.getElementById('animation-container');
-        const adminRateInput = document.getElementById('adminRate');
-        const adminBtn = document.getElementById('admin-btn');
+        // Simulated Backend Integration (In real, connect to Node.js/Express/MongoDB API with JWT auth)
+        // For demo, using localStorage to simulate data. In production, use fetch to /api endpoints.
+        const ADMIN_USERNAME = 'admin@example.com';
+        const ADMIN_PASSWORD = 'Admin123!';
+        const ADMIN_NAME = 'Site Admin';
 
-        // Conversion rate (default: 10,000 coins = 1 Taka)
-        let conversionRate = 10000;
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const adminContainer = document.getElementById('admin-container');
+            const loginPage = document.getElementById('login-page');
+            const logoutBtn = document.getElementById('logout-btn');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const navItems = document.querySelectorAll('.nav-item');
+            const pages = document.querySelectorAll('.page:not(#login-page)');
 
-        // Check if a rate is stored in localStorage
-        if (localStorage.getItem('conversionRate')) {
-            conversionRate = parseInt(localStorage.getItem('conversionRate'));
-        }
+            // Simulated Data (Replace with API calls)
+            let users = JSON.parse(localStorage.getItem('admin_users')) || [];
+            let withdrawRequests = JSON.parse(localStorage.getItem('admin_withdraws')) || [];
+            let auditLogs = JSON.parse(localStorage.getItem('admin_audit_logs')) || [];
+            let settings = JSON.parse(localStorage.getItem('admin_settings')) || {
+                adReward: 0.02,
+                dailyAdsLimit: 500,
+                minWithdraw: 100,
+                adCooldown: 30,
+                paymentApiKey: ''
+            };
 
-        // Set the admin input value to current rate
-        adminRateInput.value = conversionRate;
-
-        // Convert coins function
-        function convertCoins() {
-            const coins = parseFloat(coinAmount.value);
-            if (isNaN(coins) || coins < 0) {
-                resultValue.textContent = 'Invalid amount';
-                return;
+            function logAudit(action, details) {
+                auditLogs.push({ date: new Date().toISOString(), action, details });
+                localStorage.setItem('admin_audit_logs', JSON.stringify(auditLogs));
+                updateAuditLog();
             }
-            
-            const taka = coins / conversionRate;
-            resultValue.textContent = taka.toFixed(2) + ' Taka';
-        }
 
-        // Animate conversion
-        function animateConversion() {
-            animationContainer.classList.remove('flip');
-            // Trigger reflow
-            void animationContainer.offsetWidth;
-            animationContainer.classList.add('flip');
-            
-            // Reset animation after 2 seconds
-            setTimeout(() => {
-                animationContainer.classList.remove('flip');
-            }, 2000);
-        }
+            function showPage(targetPageId) {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                pages.forEach(page => page.classList.remove('active'));
 
-        // Update conversion rate from admin panel
-        function updateConversionRate() {
-            const newRate = parseInt(adminRateInput.value);
-            if (isNaN(newRate) || newRate <= 0) {
-                alert('Please enter a valid conversion rate');
-                return;
+                const activeNavItem = document.querySelector(`[data-page="${targetPageId}"]`);
+                if (activeNavItem) activeNavItem.classList.add('active');
+
+                const activePage = document.getElementById(targetPageId);
+                if (activePage) activePage.classList.add('active');
             }
-            
-            conversionRate = newRate;
-            localStorage.setItem('conversionRate', conversionRate);
-            convertCoins();
-            alert('Conversion rate updated to: ' + conversionRate + ' coins per Taka');
-        }
 
-        // Event listeners
-        convertBtn.addEventListener('click', function() {
-            convertCoins();
-            animateConversion();
+            navItems.forEach(item => {
+                item.addEventListener('click', () => showPage(item.getAttribute('data-page')));
+            });
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('admin-username').value;
+                const password = document.getElementById('admin-password').value;
+
+                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                    loginPage.style.display = 'none';
+                    adminContainer.style.display = 'flex';
+                    document.getElementById('admin-name').textContent = ADMIN_NAME;
+                    logAudit('Login', `Admin ${ADMIN_NAME} logged in.`);
+                    updateDashboard();
+                    updateUsersTable();
+                    updateWithdrawRequestsTable();
+                    updateAuditLog();
+                    updateSettingsForm();
+                } else {
+                    alert('Invalid credentials!');
+                }
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                logAudit('Logout', `Admin ${ADMIN_NAME} logged out.`);
+                loginPage.style.display = 'flex';
+                adminContainer.style.display = 'none';
+            });
+
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+            });
+
+            // Update Functions
+            function updateDashboard() {
+                document.getElementById('total-users').textContent = users.length;
+                const totalEarnings = users.reduce((sum, u) => sum + (u.balance || 0), 0);
+                document.getElementById('total-earnings-app').textContent = `BDT ${totalEarnings.toFixed(2)}`;
+                document.getElementById('pending-withdraws').textContent = withdrawRequests.filter(w => w.status === 'Pending').length;
+                const totalAds = users.reduce((sum, u) => sum + (u.adsWatched || 0), 0);
+                document.getElementById('total-ads-app').textContent = totalAds;
+                document.getElementById('daily-active-users').textContent = Math.floor(Math.random() * 100); // Simulated
+                document.getElementById('total-revenue').textContent = `BDT ${(totalAds * 0.01).toFixed(2)}`; // Simulated revenue
+            }
+
+            function updateUsersTable() {
+                const tbody = document.getElementById('users-table').querySelector('tbody');
+                tbody.innerHTML = '';
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>BDT ${user.balance.toFixed(2)}</td>
+                        <td>${user.adsWatched}</td>
+                        <td>${user.referrals}</td>
+                        <td>
+                            <button class="secondary-btn small" onclick="editUser('${user.id}')">Edit</button>
+                            <button class="danger-btn small" onclick="deleteUser('${user.id}')">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            function updateWithdrawRequestsTable() {
+                const tbody = document.getElementById('withdraw-requests-table').querySelector('tbody');
+                tbody.innerHTML = '';
+                withdrawRequests.forEach(req => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${req.id}</td>
+                        <td>${req.user}</td>
+                        <td>BDT ${req.amount.toFixed(2)}</td>
+                        <td>${req.method}</td>
+                        <td>${req.status}</td>
+                        <td>
+                            ${req.status === 'Pending' ? `
+                                <button class="primary-btn small" onclick="approveWithdraw('${req.id}')">Approve</button>
+                                <button class="danger-btn small" onclick="rejectWithdraw('${req.id}')">Reject</button>
+                            ` : ''}
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            function updateAuditLog() {
+                const container = document.getElementById('audit-log-container');
+                container.innerHTML = '';
+                auditLogs.forEach(log => {
+                    const div = document.createElement('div');
+                    div.classList.add('log-entry');
+                    div.textContent = `[${new Date(log.date).toLocaleString()}] ${log.action}: ${log.details}`;
+                    container.appendChild(div);
+                });
+            }
+
+            function updateSettingsForm() {
+                document.getElementById('ad-reward').value = settings.adReward;
+                document.getElementById('daily-ads-limit').value = settings.dailyAdsLimit;
+                document.getElementById('min-withdraw').value = settings.minWithdraw;
+                document.getElementById('ad-cooldown').value = settings.adCooldown;
+                document.getElementById('payment-integration').value = settings.paymentApiKey;
+            }
+
+            // Event Listeners for Actions
+            document.getElementById('add-user-btn').addEventListener('click', () => {
+                const id = prompt('Enter User ID:');
+                const name = prompt('Enter User Name:');
+                const balance = parseFloat(prompt('Enter Balance:') || 0);
+                const adsWatched = parseInt(prompt('Enter Ads Watched:') || 0);
+                const referrals = parseInt(prompt('Enter Referrals:') || 0);
+                users.push({ id, name, balance, adsWatched, referrals });
+                localStorage.setItem('admin_users', JSON.stringify(users));
+                logAudit('Add User', `Added user ${name} (ID: ${id})`);
+                updateUsersTable();
+                updateDashboard();
+            });
+
+            window.editUser = (id) => {
+                const user = users.find(u => u.id === id);
+                if (user) {
+                    const newBalance = prompt('Edit Balance:', user.balance);
+                    if (newBalance) user.balance = parseFloat(newBalance);
+                    localStorage.setItem('admin_users', JSON.stringify(users));
+                    logAudit('Edit User', `Edited balance for user ${user.name} to ${user.balance}`);
+                    updateUsersTable();
+                    updateDashboard();
+                }
+            };
+
+            window.deleteUser = (id) => {
+                if (confirm('Delete user?')) {
+                    users = users.filter(u => u.id !== id);
+                    localStorage.setItem('admin_users', JSON.stringify(users));
+                    logAudit('Delete User', `Deleted user ID: ${id}`);
+                    updateUsersTable();
+                    updateDashboard();
+                }
+            };
+
+            window.approveWithdraw = (id) => {
+                const req = withdrawRequests.find(r => r.id === id);
+                if (req) {
+                    req.status = 'Approved';
+                    // Simulate payment integration
+                    alert(`Payment processed via ${settings.paymentApiKey} for ${req.amount} BDT`);
+                    localStorage.setItem('admin_withdraws', JSON.stringify(withdrawRequests));
+                    logAudit('Approve Withdraw', `Approved withdraw ${id} for ${req.user}`);
+                    updateWithdrawRequestsTable();
+                    updateDashboard();
+                }
+            };
+
+            window.rejectWithdraw = (id) => {
+                const req = withdrawRequests.find(r => r.id === id);
+                if (req) {
+                    req.status = 'Rejected';
+                    localStorage.setItem('admin_withdraws', JSON.stringify(withdrawRequests));
+                    logAudit('Reject Withdraw', `Rejected withdraw ${id} for ${req.user}`);
+                    updateWithdrawRequestsTable();
+                    updateDashboard();
+                }
+            };
+
+            document.getElementById('settings-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                settings.adReward = parseFloat(document.getElementById('ad-reward').value);
+                settings.dailyAdsLimit = parseInt(document.getElementById('daily-ads-limit').value);
+                settings.minWithdraw = parseFloat(document.getElementById('min-withdraw').value);
+                settings.paymentApiKey = document.getElementById('payment-integration').value;
+                localStorage.setItem('admin_settings', JSON.stringify(settings));
+                logAudit('Update Settings', 'App settings updated.');
+                alert('Settings saved!');
+            });
+
+            document.getElementById('rate-limit-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                settings.adCooldown = parseInt(document.getElementById('ad-cooldown').value);
+                // Add more security settings as needed
+                localStorage.setItem('admin_settings', JSON.stringify(settings));
+                logAudit('Update Security', 'Security and rate limiting updated.');
+                alert('Security settings applied!');
+            });
+
+            document.getElementById('generate-report-btn').addEventListener('click', () => {
+                alert('Report generated! (Simulated - Download CSV in production)');
+                logAudit('Generate Report', 'Admin generated analytics report.');
+            });
+
+            document.getElementById('user-search').addEventListener('input', (e) => {
+                const search = e.target.value.toLowerCase();
+                const filteredUsers = users.filter(u => u.name.toLowerCase().includes(search) || u.id.includes(search));
+                // Update table with filteredUsers (implement similar to updateUsersTable)
+            });
+
+            // In real Node.js/Express/MongoDB setup:
+            // Use fetch('/api/users', { headers: { Authorization: 'Bearer ' + token } }) for data.
+            // JWT for auth, MongoDB for storage, Express for routes with rate-limiting (express-rate-limit).
+            // Payment integration: Integrate bKash/Nagad SDK in backend.
+            // Scalable: Use clusters, deploy on Vercel/Heroku/AWS.
+            // Audit log: Store in MongoDB collection.
         });
-
-        coinAmount.addEventListener('input', convertCoins);
-        adminBtn.addEventListener('click', updateConversionRate);
-
-        // Initial conversion
-        convertCoins();
     </script>
 </body>
 </html>
